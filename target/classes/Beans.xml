@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+
+    <aop:config>
+        <aop:aspect id="log" ref="logging">
+            <aop:pointcut id="selectAll" expression="execution(* lsk.AOP.*.*(..))"/>
+            <!--切点 selectAll 为 执行任何lsk.AOP下的java文件中的方法 -->
+
+            <aop:before pointcut-ref="selectAll" method="beforeAdvice"/>
+            <!-- 在执行切点前，执行Bean logging 中的 beforeAdvice 方法-->
+
+            <aop:after pointcut-ref="selectAll" method="afterAdvice"/>
+            <aop:after-returning pointcut-ref="selectAll" returning="retVal" method="afterReturningAdvice"/>
+            <!-- 返回值时，执行Bean logging 中的 afterReturningAdvice方法，返回值为方法的retVal参数的值 -->
+            <aop:after-throwing pointcut-ref="selectAll" throwing="ex" method="afterThrowingAdvice"/>
+            <!-- 在触发异常后，准备抛出前，执行Bean logging 中的  afterThrowingAdvice方法，并将 异常作为参数传递-->
+        </aop:aspect>
+    </aop:config>
+
+    <!-- Definition for student bean -->
+    <bean id="student" class="lsk.AOP.Student">
+        <property name="name"  value="Eric" />
+        <property name="age"  value="18"/>
+    </bean>
+
+    <!-- Definition for logging aspect -->
+    <bean id="logging" class="lsk.AOP.Logging"/>
+
+</beans>
